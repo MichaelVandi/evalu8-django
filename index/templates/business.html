@@ -1,0 +1,436 @@
+{% extends 'index_base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="container-fluid" style="margin-top: 120px; padding-left: 30px; padding-right: 30px; margin-bottom: 40px;">
+        <!-- Row to contain page columns-->
+        <div class="row">
+            <!-- Div for main details-->
+            <div class="col-md-8">
+                <!-- Row for map and images-->
+                <div class="row">
+                    <!-- Images-->
+                    <div class="col-md-6">
+                        <!--Cover image div -->
+                        <div id="coverImage" class="cover-image">
+                            
+                        </div>
+                        
+                    </div>
+                    <!-- Map-->
+                    <div class="col-md-6">
+                        <div id="map">
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Div for more data-->
+                <div class="row">
+                    <div class=" col-md-6 needs-vpadding">
+                        <div class="h-row-flex">
+                            <h4>{{business.business_name}}</h4>
+                            <!-- How expensive is this place-->
+                            <div style="margin-left: 10px;">
+                                <i id="money1" class="fas money-icon fa-dollar-sign"></i> <i id="money2" class="fas money-icon fa-dollar-sign"></i>
+                                <i id="money3" class="fas money-icon fa-dollar-sign"></i> <i id="money4" class="fas money-icon fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <h6 style="font-weight: normal"> <i class="fas bus-icons fa-home"></i>{{business.business_address}}, San Francisco</h6>
+                        <!-- Health Score Div-->
+                        <div id="reviewDiv" class="h-row-flex" style="width: 95%;">
+                            <i class="fas bus-icons fa-check-square"></i>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success p-bar" role="progressbar" 
+                                    aria-valuenow="{{business.inspection_score}}" aria-valuemin="0" aria-valuemax="100" 
+                                    style="width:{{business.inspection_score}}%">
+                                    <p id="scoreText" class="score-text" style="color: white">Official Health Score - {{business.inspection_score}}%</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Phone Number-->
+                        <div class="h-row-flex" style="margin-top: 5px;">
+                            <i class="fas bus-icons fa-phone-square"></i>
+                            <h6 id="phoneNumber" style="font-weight: normal"> </h6>  
+                        </div>
+                        <!-- Div to append website info from jquery -->
+                        <div class="h-row-flex" style="margin-top: 1px;" id="website">
+                        </div>
+                        <!-- Div for Google Ratings -->
+                        <div class="h-row-flex" style="margin-top: 1px;" id="g-rating">
+                        </div>                
+
+                    </div>
+
+                    <!-- Div for action buttons-->
+                    <div class="col-md-6">
+                        <div class="h-row-flex">
+                            <div class="action-link-nofill">
+                                <a class="nav-link" href="#reviewDiv"> <h5 class="action-text"><i class="fas action-icon fa-comments"></i>Reviews</h5></a>
+                            </div>
+                            <!-- Future Update
+                            <div class="action-link-nofill">
+                                <a class="nav-link" href=""><h5 class="action-text"><i class="fas action-icon fa-directions"></i>Directions</h5></a>
+                            </div>
+                            -->
+                        </div>
+                        <!-- Higher score link button-->
+                        <!-- Future Update
+                        <div class="action-link-large">
+                                <a class="nav-link" href=""><h5 class="action-text"><i class="fas action-icon fa-search-location">
+                                    </i>Find restaurants with higher score</h5></a>
+                        </div>
+                        -->
+                    </div>
+
+                </div>
+
+                <!-- Div for Reviews-->
+                <div id="revDiv" class="needsTopBorder">
+                    <h5>Reviews</h5>
+                    <div class="write-text-div">
+                        <div class="user-thumb-div">
+                        {% if profile.image %}
+                            <img class="user-thumb" src="{{profile.image.url}}"/>
+                        {% else %}
+                            <img class="user-thumb" src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png"/>
+                        {% endif %}
+                            
+                        </div>
+                        <form id="messageForm" class="text-form">
+                                {% csrf_token %}
+                                <input id ="textField" name="textField" class="text-bar" type="text" placeholder="Write a public review...">
+                                <button class="review-btn">SUBMIT</button>
+                                <p id="successField" class="text-success">{{successMessage}}</p>
+                                <p id="errorField" class="text-error">{{errorMessage}}</p>
+                                <hr>
+                        </form>
+                    </div>
+                    
+                    <!-- Div for Google reviews-->
+                    <div id="google-review-div">
+                        <!--Blueprint
+                        <div class="h-row-flex">
+                            <img class="user-thumb" src="https://cdn.pixabay.com/user/2013/11/05/02-10-23-764_250x250.jpg"/>
+                            <div>
+                                <div class="user-row-flex">
+                                    <p class="user-name-text"> Michael Vandi </p>
+                                    <p class="time-text">a month ago</p>
+                                </div>
+                                    <p class="user-review-text"> This is a nice restaurant</p>
+                            </div>
+                        </div>
+                        -->
+                    </div>
+
+                    <!-- Div for my own reviews on evaluate platform-->
+
+                    <div id="my-review-div">
+                       {% for review in reviews %}
+                            <div class="h-row-flex" style="margin-bottom: 20px;">
+                                {% if review.image_url is none or review.image_url == "" %}
+                                    <img class="user-thumb" src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png"/>
+                                {% else %}
+                                    <img class="user-thumb" src="{{review.image_url}}"/>
+                                {% endif %}
+                                <div>
+                                    <div class="user-row-flex">
+                                        <p class="user-name-text">{{review.username}} </p>
+                                        <p class="time-text">{{review.timestamp}}</p>
+                                    </div>
+                                        <p class="user-review-text">{{review.review_text}}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                
+                </div>
+
+            </div>
+
+            <!-- Column for More restaurants around-->
+            <div class="col-md-4">
+                {% for result in results %}
+                    <div class="h-row-flex" style="margin-bottom: 15px;">
+                        <div class="more-bus-thumb" style="background-image: url( {{photos|random}} );">
+
+                        </div>
+                        <!-- Div for info on more thumbnail-->
+                        <div>
+                            <h6>{{result.business_name}}</h6>
+                            <p class="bus-text text-address">{{result.business_address}}</p>
+                            <p class="bus-text text-city" style="margin: 0; padding: 0;">{{result.business_city}}</p>
+                            {% if result.inspection_score == none %}
+                                <p><i class="fas bus-icon fa-check-square"></i>Not avaiable</p>
+                            {% else %}
+                                <p><i class="fas bus-icon fa-check-square"></i>{{result.inspection_score}}%</p>                            
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+                
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    
+        // When DOM is loaded
+        document.addEventListener('DOMContentLoaded', ()=>{
+            // Function to create Google review
+            function createGoogleReview (reviews, reviewAmount){
+                for(let i=0; i<reviewAmount; i++){
+                    // Create main review div
+                    var mainDiv = document.createElement("div");
+                    mainDiv.setAttribute('class', 'h-row-flex review-container');
+                    // Create Image element
+                    var userImage = document.createElement("img");
+                    userImage.setAttribute('class', 'user-thumb');
+                    userImage.setAttribute('style', "width: 40px; height: 40px;");
+                    userImage.setAttribute('src', reviews[i].profile_photo_url);
+
+                    var reviewContainer = document.createElement('div');
+                    var nameTimeDiv = document.createElement('div');
+                    nameTimeDiv.setAttribute('class', "user-row-flex")
+                    // Name and time etc paragraph
+                    var nameParagraph = document.createElement('p');
+                    nameParagraph.setAttribute('class', 'user-name-text');
+                    nameParagraph.innerHTML = reviews[i].author_name;
+                    // Time
+                    var timeParagraph = document.createElement('p');
+                    timeParagraph.setAttribute('class', 'time-text');
+                    timeParagraph.innerHTML = reviews[i].relative_time_description;
+                    // Review
+                    var reviewParagraph = document.createElement('p');
+                    reviewParagraph.setAttribute('class', 'user-review-text');
+                    reviewParagraph.innerHTML = reviews[i].text;
+
+                    nameTimeDiv.appendChild(nameParagraph);
+                    nameTimeDiv.appendChild(timeParagraph);
+
+                    reviewContainer.appendChild(nameTimeDiv);
+                    reviewContainer.appendChild(reviewParagraph);
+                    
+                    mainDiv.appendChild(userImage);
+                    mainDiv.appendChild(reviewContainer);
+                    
+                    // Append each review to the google reviews div                    
+                    $("#google-review-div").append(mainDiv);
+                }
+                
+            }
+             // Get place Photos of restaurant shown
+             // If there is no location data, find by places on google
+             $("#restaurants").css("border-bottom", "1px solid #D28827");
+             var businessLocation;
+             if ("{{business.business_location}}" ===""){
+                businessLocation = new google.maps.LatLng(37.757815, -122.5076404);
+            }
+             // If location data exists format map
+             else{
+                var businessLocation = new google.maps.LatLng("{{business.business_latitude|safe}}", "{{business.business_longitude|safe}}");
+            }
+                var map = new google.maps.Map(document.getElementById('map'), {center: businessLocation, zoom: 15});
+                var marker = new google.maps.Marker({position: businessLocation, map: map});
+                // Get the photos... Make Request to Google Maps API
+                var service = new google.maps.places.PlacesService(map);
+                var rawQueryString ="{{business.business_name}} "+"{{business.business_address}}"
+                queryString = rawQueryString.replace("#+", '');
+                var request ={
+                query: queryString,
+                fields:['photos' ,'icon', 'place_id', 'name', 'opening_hours',
+                        'price_level', 'rating', 'user_ratings_total', 'geometry'],}
+                // find                
+                service.findPlaceFromQuery(request, function(results, status) {
+
+                    if (status === google.maps.places.PlacesServiceStatus.OK){
+                        var coverPhoto = results[0].photos[0].getUrl().toString();
+                        //Set the image cover to the first image received
+                        
+                        if(coverPhoto ==="" || coverPhoto === null){
+                            $("#coverImage").css("background-image", 'url(' + "https://i.imgur.com/sJuqUOk.png" + ')')
+                        }
+                        else{
+                            $("#coverImage").css("background-image", 'url(' + coverPhoto + ')')
+                        }
+                        // Set map center to place
+                        map = new google.maps.Map(document.getElementById('map'), 
+                                    {center: results[0].geometry.location, zoom: 17});
+                        marker = new google.maps.Marker({position: results[0].geometry.location, map: map});
+                       // Display Google Ratings
+                       var rating_icon = document.createElement('i');
+                        rating_icon.setAttribute('class', 'fas bus-icons fa-star');
+                        $("#g-rating").append(rating_icon);
+                        var googleRatingRaw = results[0].rating + " stars - Google Rating from " 
+                                            + results[0].user_ratings_total + " users";
+                        var googleRating =googleRatingRaw.replace("undefined", '0');
+                        var ratingText = document.createElement('h6');
+                        ratingText.setAttribute('style', 'font-weight: normal')
+                        ratingText.innerHTML = googleRating;
+                        $("#g-rating").append(ratingText);
+                        
+                        // Display the price level
+                        switch(results[0].price_level){
+                            case 1:
+                                $("#money1").css('color', 'grey');
+                            break;
+                            case 2:
+                                $("#money1").css('color', 'grey');
+                                $("#money2").css('color', 'grey');
+                            break;
+                            case 3:
+                                $("#money1").css('color', 'grey');
+                                $("#money2").css('color', 'grey');
+                                $("#money3").css('color', 'grey');
+                            break;
+                            case 4:
+                                $("#money1").css('color', 'grey');
+                                $("#money2").css('color', 'grey');
+                                $("#money3").css('color', 'grey');
+                                $("#money4").css('color', 'grey');
+                            break;
+                        }
+                        // Get more details
+                        var service2 = new google.maps.places.PlacesService(map);
+                        var request2 = {placeId: results[0].place_id,
+                            fields: ['formatted_phone_number', 'reviews', 'website']};
+                        service2.getDetails(request2, callback);
+
+                        function callback(place, status) {
+                            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                // Display public phone Number
+                                var phoneNumber = place.formatted_phone_number;
+                                // If google returned a valid phone number show that instead
+                                if (phoneNumber === "" || phoneNumber === null){
+                                    var busPhone = "{{business.business_phone_number}}";
+                                    if(busPhone ==="" || busPhone === null){
+                                        $("#phoneNumber").html("Could not find phone number"); 
+                                    }
+                                    else{
+                                        $("#phoneNumber").html("{{business.business_phone_number}}");                                
+                                    }
+                                }
+                                // Else show the one from sf gov dataset
+                                else{
+                                    $("#phoneNumber").html(place.formatted_phone_number);                                                               
+                                }
+                                var website = place.website.toString();
+                                if(website ==="" || website === null || website ==="undefined"){
+                                    // No website, do nothing;
+                                }
+                                else{
+                                    // Website exists, create div for it
+                                    var icon = document.createElement('i');
+                                    icon.setAttribute('class', 'fas bus-icons web-icon fa-globe-africa');
+                                    $("#website").append(icon);
+                                    var webLink = document.createElement('a');
+                                    webLink.setAttribute('class', 'web-link');
+                                    webLink.setAttribute('href', website);
+                                    webLink.innerHTML = website;
+                                    $("#website").append(webLink);
+                                }
+                                // Display Reviews, If reviews received are greater than 20
+                                if(place.reviews.length >20){
+                                    // Create for only 20 reviews
+                                    createGoogleReview(place.reviews, 20)
+                                    $('user-thumb').css("width: 40px; height: 40px;")
+                                }
+                                // Reviews recieved less than 20, create reviews for all of them
+                                else{
+                                    createGoogleReview(place.reviews, place.reviews.length) 
+                                    $('user-thumb').css("width: 40px; height: 40px;")
+                                }
+                            }
+                            else{
+                                // Get more details Did not work
+                                
+                            }
+                        }
+                    }
+                    else{
+                        // Some error, format relevant views
+                        $("#coverImage").css("background-image", 'url(' + "https://i.imgur.com/sJuqUOk.png" + ')')
+                    }
+                })
+            var inspection_score = parseInt("{{business.inspection_score}}")
+            if("{{business.inspection_score}}" != ""){
+                if (inspection_score >=80 && inspection_score <=100){
+                $(".p-bar").css("background-color", 'green');
+                }
+                else if(inspection_score >=70 && inspection_score <=79){
+                    $(".p-bar").css("background-color", '#DFA635');
+                }
+                else if(inspection_score >=60 && inspection_score <=69){
+                    $(".p-bar").css("background-color", '#DF6135');
+                }
+                else{
+                    $(".p-bar").css("background-color", 'red');
+                }
+            }
+            // No inspection data exists
+            else{
+                $(".p-bar").css("background-color", 'grey');
+                $(".p-bar").css("width", '100%');
+                $("#scoreText").html("No official health score available")
+            }
+            function sendDataToServer (business_id, image, review_text, timestamp){
+                const form_final = document.createElement('form');
+                form_final.method = "POST";
+                form_final.action = "{% url 'review'%}";
+                // Csrf {% csrf_token %}
+                var csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = 'csrfmiddlewaretoken';
+                csrf.value = '{{ csrf_token }}';
+                form_final.appendChild(csrf);
+                var data_to_send = [business_id, image, review_text, timestamp]
+                var key=["business_id", "image", "text", "timestamp"]
+                for (i=0; i<data_to_send.length; i++){
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key[i];
+                    input.value = data_to_send[i];
+                    form_final.appendChild(input);
+                }
+                
+                document.getElementById('revDiv').appendChild(form_final);
+                form_final.submit();
+            }
+            // What happens when text form is submitted
+        document.querySelector("#messageForm").onsubmit = () =>{
+
+            // Check if text message field is empty
+            const text_to_send= document.querySelector('#textField').value;
+            if(text_to_send ===""){
+                // Field is empty, return error
+                document.getElementById("errorField").innerHTML ="Review cannot be empty"
+                return false;
+            }
+            // Text field is not blank
+            // Set error text field to empty
+            document.getElementById("errorField").innerHTML ="";
+            // Get the date and time
+            var currentDate = new Date(); 
+            var dateTime =  currentDate.getDate() + "/"
+                            + (currentDate.getMonth()+1)  + "/" 
+                            + currentDate.getFullYear() + " @ "  
+                            + currentDate.getHours() + ":"  
+                            + currentDate.getMinutes() + ":" 
+                            + currentDate.getSeconds();
+            var imageUrl = "{{profile.image.url}}"
+            if ("{{profile.image.url}}" === ""){
+                imageUrl ="http://ssl.gstatic.com/accounts/ui/avatar_2x.png";
+            }
+            var businessid ="{{business.business_id}}"
+            sendDataToServer (businessid, imageUrl, text_to_send, dateTime)
+            return false;
+        }; 
+                
+            })
+        
+    </script>
+
+{% endblock %}

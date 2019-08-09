@@ -1,0 +1,49 @@
+pandas
+sodapy
+
+AIzaSyBRSR9EQYxwVgtIjtvBPvlK8BgrVf38F_I
+
+locationBias: {radius: 100, center: {lat: 37.402105, lng: -122.081974}}
+
+
+Tentative code for health score progress
+<div class="h-row-flex" style="width: 100%;">
+                        {% if result.inspection_score|add:"0" >= 80 and result.inspection_score|add:"0" <= 100 %}
+                        <div class="progress">
+                            <div id="{{result.inspection_score}}" class="progress-bar progress-bar-success p-bar" role="progressbar" 
+                                aria-valuenow="{{result.inspection_score}}" aria-valuemin="0" aria-valuemax="100" 
+                                style="width:{{result.inspection_score}}%; border: 0.5px solid green;  background-color: transparent;">
+                                <p class="score-text">Score - {{result.inspection_score}}% </p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if result.inspection_score|add:"0" >= 70 and result.inspection_score|add:"0" <= 79 %}
+                        <div class="progress">
+                            <div id="{{result.inspection_score}}" class="progress-bar progress-bar-success p-bar" role="progressbar" 
+                                aria-valuenow="{{result.inspection_score}}" aria-valuemin="0" aria-valuemax="100" 
+                                style="width:{{result.inspection_score}}%; border: 0.5px solid #DFA635;  background-color: transparent;">
+                                <p class="score-text">Score - {{result.inspection_score}}% </p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if result.inspection_score|add:"0" >= 60 and result.inspection_score|add:"0" <= 69 %}
+                        <div class="progress">
+                            <div id="{{result.inspection_score}}" class="progress-bar progress-bar-success p-bar-index" role="progressbar" 
+                                aria-valuenow="{{result.inspection_score}}" aria-valuemin="0" aria-valuemax="100" 
+                                style="width:{{result.inspection_score}}%; border: 0.5px solid #DF6135; background-color: transparent;">
+                                <p class="score-text">Score - {{result.inspection_score}}% </p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if result.inspection_score == none %}
+                        <div class="progress">
+                            <div id="{{result.inspection_score}}" class="progress-bar progress-bar-success p-bar" role="progressbar" 
+                                aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" 
+                                style="width:100%; background-color: transparent">
+                                <p class="score-text"> No official health score available</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                    </div>
+
