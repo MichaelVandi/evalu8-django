@@ -64,7 +64,7 @@
     
 
     <div class="container-fluid text-center">
-        <h4 id="count-text" style="color:black"></h4>
+        <h4 id="count-text" style="color:black">Food places with health scores over 90%</h4>
         <div class="d-inline-flex text-center">
             <div class="bus-list-div">
             {% for result in results%}
@@ -99,7 +99,7 @@
             </div>
         </div>
         <!-- Div for loading spinners -->
-        <div style="margin-bottom: 60px;">
+        <div style="margin-bottom: 40px;">
             <div class="spinner-grow text-primary" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
@@ -154,16 +154,16 @@
                 counter = end + 1;
 
                 $.ajax({
-                url: "/places",
-                type: "GET", // or "get"
+                url: "/top",
+                type: "GET", 
                 data:{
                     start: start,
                     end: end
                 },
                 success: function(data) {
                     data = JSON.parse(data);
+                    
                     data.forEach(add_post);
-                    $("#count-text").text("Showing " + end.toString() + " of 53,000 food places")
                 }
                 });
                

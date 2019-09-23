@@ -43,58 +43,63 @@
                         <div class="form-group">
                             
                             <div class="col-xs-6">
-                                <label for="first_name"><h4>First name</h4></label>
+                                <label for="first_name"><h5>First name</h5></label>
                                 <input type="text" class="form-control" name="first_name" id="first_name" placeholder="first name" title="enter your first name if any.">
                             </div>
                         </div>
                         <div class="form-group">
                             
                             <div class="col-xs-6">
-                                <label for="last_name"><h4>Last name</h4></label>
+                                <label for="last_name"><h5>Last name</h5></label>
                                 <input type="text" class="form-control" name="last_name" id="last_name" placeholder="last name" title="enter your last name if any.">
                             </div>
                         </div>
             
                         <div class="form-group">
                             <div class="col-xs-6">
-                                <label for="mobile"><h4>Mobile</h4></label>
+                                <label for="mobile"><h5>Mobile</h5></label>
                                 <input type="text" class="form-control" name="mobile" id="mobile" placeholder="enter mobile number" title="enter your mobile number if any.">
                             </div>
                         </div>
                         <div class="form-group">
                             
                             <div class="col-xs-6">
-                                <label for="email"><h4>Email</h4></label>
+                                <label for="email"><h5>Email</h5></label>
                                 <input type="email" class="form-control" name="email" id="email" placeholder="you@email.com" title="enter your email.">
                             </div>
                         </div>
                         <div class="form-group">
                             
                             <div class="col-xs-6">
-                                <label for="email"><h4>City</h4></label>
-                                <input type="email" class="form-control" name="city" id="location" placeholder="somewhere" title="enter a location">
+                                <label for="email"><h5>City</h5></label>
+                                <input type="text" class="form-control" name="city" id="location" placeholder="somewhere" title="enter a location">
                             </div>
                         </div>
+
+                        <!--
                         <div class="form-group">
                             
                             <div class="col-xs-6">
-                                <label for="password"><h4>Password</h4></label>
+                                <label for="password"><h5>Password</h5></label>
                                 <input type="password" class="form-control" name="password" id="password" placeholder="password" title="enter your password.">
                             </div>
                         </div>
                         <div class="form-group">
                             
                             <div class="col-xs-6">
-                                <label for="password2"><h4>Confirm</h4></label>
+                                <label for="password2"><h5>Confirm</h5></label>
                                 <input type="password" class="form-control" name="password2" id="password2" placeholder="password2" title="enter your password2.">
                             </div>
                         </div>
+                        -->
                         <div class="form-group">
                             <div class="col-xs-12">
                                     <br>
-                                    <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
-                                    <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Cancel</button>
+                                    <a class="btn btn-lg btn-success save_info" style="color:white"> Save</a>
+                                    <a href="{% url 'index' %}" class="btn btn-lg btn-danger" style="color:white"> Cancel</a>
+                                    <button class="btn btn-lg btn-secondary" type="reset"> Clear All</button>
                                     <p class="text-error">{{message}}</p>
+                                    <p style="color: green;">{{messagePositive}} </p>
                                 </div>
                         </div>
                     </form>
@@ -129,6 +134,108 @@
         $('input[name=email]').val("{{user.email}}");
         $('input[name=mobile]').val("{{profile.mobile}}");
         $('input[name=city]').val("{{profile.city}}");
+        function sendDataToServer (firstName, lastName, mobileNumber, email, city){
+            const form_final = document.createElement('form');
+            form_final.method = "POST";
+            form_final.action = "{% url 'profile' %}";
+            // Csrf {% csrf_token %}
+            var csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = 'csrfmiddlewaretoken';
+            csrf.value = '{{ csrf_token }}';
+            form_final.appendChild(csrf);
+            var data_to_send = [firstName, lastName, mobileNumber, email, city]
+            var key=["firstName", "lastName", "mobileNumber", "email","city"]
+            for (i=0; i<data_to_send.length; i++){
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key[i];
+                input.value = data_to_send[i];
+                form_final.appendChild(input);
+            }
+            
+            document.getElementById('home').appendChild(form_final);
+            form_final.submit();
+        }
+
+        // When save button is clicked, perform some checks
+        $(".save_info").click(
+            function(){
+            // Validate all text boxes
+            var firstName = $("#first_name").val();
+            var lastName = $("#last_name").val();
+            var mobileNumber =$("#mobile").val();
+            var email = $("#email").val();
+            var city =$("#location").val();
+            var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+
+            if(firstName.length < 2){
+                // One or more fields are empty
+                $(".form-control").css("border-color", "#ced4da")
+                $("#first_name").css("border-color", "red");
+                $(".text-error").text("Firstname must be 2 or more characters")
+                return false;
+            }
+            if(lastName.length < 2){
+                // One or more fields are empty
+                $(".form-control").css("border-color", "#ced4da")
+                $("#last_name").css("border-color", "red");
+                $(".text-error").text("Lastname must be 2 or more characters")
+                return false;
+            }
+            if(email.length < 5){
+                // Make field red 
+                $(".form-control").css("border-color", "#ced4da")
+                $("#email").css("border-color", "red");
+                $(".text-error").text("Email addresses must be more than 5 characters")
+                return false;
+            }
+            if(mobileNumber.length < 10 ){
+                // Make field red
+                $(".form-control").css("border-color", "#ced4da")
+                $("#mobile").css("border-color", "red");
+                $(".text-error").text("Mobile number is incomplete")
+                return false;
+            }
+            if(!mobileNumber.match(phoneno)){
+                $(".form-control").css("border-color", "#ced4da")
+                $("#mobile").css("border-color", "red");
+                $(".text-error").text("Mobile number badly formatted")
+                return false;
+            }
+            if (city.length < 2){
+                $(".form-control").css("border-color", "#ced4da")
+                $("#location").css("border-color", "red");
+                $(".text-error").text("City must be 2 or more characters")
+                return false;
+            }
+            if(email =="" || !email.includes("@")){
+                $(".text-error").text("Email is badly formatted !")
+                return false;
+            }
+            // If everything else is fine, send data to database
+            sendDataToServer(firstName, lastName, mobileNumber, email, city);
+            
+            /*
+            $.ajax({
+            url: "/profile/",
+            type: "POST", 
+            data:{
+                firstName: firstName,
+                lastName: lastName,
+                mobileNumber: mobileNumber,
+                email: email,
+                city: city
+            },
+            success: function(data) {
+                // data = JSON.parse(data);
+                
+            }
+            });
+            */
+
+        })
+
 
     });
 

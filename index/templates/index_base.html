@@ -18,11 +18,12 @@
 
   </head>
   <body>
-      <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white;     -webkit-box-shadow: 1px 1px 4px 5px #cccc; 
-    -moz-box-shadow:    1px 1px 4px 5px #cccc; 
-    box-shadow:         1px 1px 4px 5px #cccc;
-      position: fixed; z-index: 5; width: 100%;">
-          <a class="navbar-brand" href="#">
+      <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white;     
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23); 
+    -moz-box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    position: fixed; z-index: 5; width: 100%;">
+          <a class="navbar-brand" href="{% url 'index' %}">
               <img id="logo" src="{% static 'logo.png' %}" alt="evalu8">
             </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +34,9 @@
             <ul class="navbar-nav ml-auto" style="margin-right: 60px;">
               <li class="nav-item active">
                 <a class="nav-link" href=" {% url 'index' %} "> <h4 class="nav-text" id="restaurants">Restaurants</h4></a>
+              </li>
+              <li class="nav-item active">
+                <a class="nav-link" href=" {% url 'topPicks' %} "> <h4 class="nav-text" id="topPicks">Top picks</h4></a>
               </li>
               <!-- Update
               <li class="nav-item" style="margin-left: 10px;">
@@ -89,6 +93,23 @@
       {% endblock %}
 
     </div>
+
+    <!-- Footer Div-->
+    <div id="footer-div" class="container-fluid text-center">
+      <div id="footer-items-wrapper">
+        <p id="footer-text">© Michael Vandi.</p>
+        <a href="https://www.linkedin.com/in/michael-vandi/" target="_blank" id="footer-text" style="margin-left: 10px;">
+        <p style="color:blue; text-decoration: underline">LinkedIn</p></a>
+
+        <a href="https://github.com/MichaelVandi" target="_blank" id="footer-text" style="margin-left: 10px;">
+        <p style="color:blue; text-decoration: underline">Github</p></a>
+
+        <a href="https://www.instagram.com/mike_ehl_/" target="_blank" id="footer-text" style="margin-left: 10px;">
+        <p style="color:blue; text-decoration: underline">Instagram</p></a>
+
+      </div>
+    </div>
+
           
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

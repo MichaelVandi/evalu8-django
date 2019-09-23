@@ -5,7 +5,7 @@ AIzaSyBRSR9EQYxwVgtIjtvBPvlK8BgrVf38F_I
 
 locationBias: {radius: 100, center: {lat: 37.402105, lng: -122.081974}}
 
-
+ 
 Tentative code for health score progress
 <div class="h-row-flex" style="width: 100%;">
                         {% if result.inspection_score|add:"0" >= 80 and result.inspection_score|add:"0" <= 100 %}

@@ -25,7 +25,7 @@ SECRET_KEY = '^xg6i=kj1_ty1xf9qy@hit2@k%ztq%_shl7m*n!+nyej_y8c+1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.0.103',]
 
 
 # Application definition
@@ -122,3 +122,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.zoho.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'no-reply@evalu8.xyz'
+EMAIL_HOST_PASSWORD = 'Password_001'
+DEFAULT_FROM_EMAIL = 'evalu8 Team <no-reply@evalu8.xyz>'

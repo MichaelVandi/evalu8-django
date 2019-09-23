@@ -126,3 +126,39 @@ body{
         flex-direction: row;
         
     }
+    /* Forget password styles */
+
+        .simple-form{
+        margin: 0 .25rem;
+        }
+      .simple-form input {
+        border: 1px solid #eee;
+        border-left: 3px solid;
+        border-radius: 5px;
+        transition: border-color .5s ease-out;
+        width: 100%;
+      }
+      .simple-form li{
+          color: white;
+      }
+      .simple-form label{
+        color: white;
+        font-weight: bold;
+    }
+      .simple-form button {
+          color: white;
+          background-color: #CC9933;
+          border-radius: 8px;
+          border: none;
+          padding: 5px;
+      }
+      .simple-form input:optional {
+        border-left-color: #999;
+      }
+      .simple-form input:required {
+        border-left-color: palegreen;
+      }
+      .simple-form input:invalid {
+        border-left-color: salmon;
+        
+      }
