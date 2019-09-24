@@ -144,4 +144,4 @@ EMAIL_HOST_USER = 'no-reply@evalu8.xyz'
 EMAIL_HOST_PASSWORD = 'Password_001'
 DEFAULT_FROM_EMAIL = 'evalu8 Team <no-reply@evalu8.xyz>'
 
-# django_heroku.settings(locals())
+django_heroku.settings(locals())
