@@ -11,4 +11,5 @@ urlpatterns = [
     path("places/", views.getPlaces, name="more"),
     path("search/", views.searchView, name="search"),
     path("business/<str:business_id>", views.business_view, name="business"),
+    path("category/<str:category>", views.category_view, name="category"),
 ]

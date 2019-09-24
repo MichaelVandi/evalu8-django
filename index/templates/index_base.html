@@ -39,11 +39,21 @@
               <li class="nav-item active">
                 <a class="nav-link" href=" {% url 'topPicks' %} "> <h4 class="nav-text" id="topPicks">Top picks</h4></a>
               </li>
-              <!-- Update
-              <li class="nav-item" style="margin-left: 10px;">
-                <a  class="nav-link" href=""> <h4 class="nav-text" id="topPicks">Top picks</h4></span></a>
+              <!-- Categories -->
+              <li class="nav-item dropdown" style="margin-right: 20px;">
+                <a class="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <h4 class="nav-text"></i>Categories</h4>
+                </a>
+                <!-- Dropdown links -->
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
+                {% for category in categories %}
+                  <a class="dropdown-item" href="{% url 'category' category %}">{{category}}</a>
+                {% endfor %}
+
+                </div>
               </li>
-              -->
+
           {% if user.is_authenticated %}
               <li class="nav-item dropdown" style="margin-right: 20px;">
                 <a class="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

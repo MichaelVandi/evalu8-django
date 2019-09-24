@@ -13,6 +13,8 @@ from django.contrib.auth.models import User
 
 
 client = Socrata("data.sfgov.org", None)
+categories  = ["Beef","Bread","Burger","Chicken","Chinese","Cupcakes","Fish",
+    "Fries","Hot dogs","Japanese","Meat","Mexican","Pasta","Pie","Pizza","Salad","Sandwich", "Subs"]
 # Cover images list to get random from
 coverNum = ['/static/cover1.jpg', '/static/cover2.jpg', '/static/cover3.jpg', '/static/cover4.jpg',
 '/static/cover5.jpg', '/static/cover6.jpg', '/static/cover7.jpg', '/static/cover8.jpg',]
@@ -37,7 +39,8 @@ def index_view(request):
         "photos": photos,
         "coverPhotos": coverNum,
         "headline": headline,
-        "resultNum": result_num
+        "resultNum": result_num,
+        "categories": categories
     }
         
     return render(request, "index.html", context)
@@ -51,10 +54,35 @@ def top_picks(request):
         "coverPhotos": coverNum,
         "headline": headline,
         "resultNum": result_num,
-        "toppicks" : "True"
+        "toppicks" : "True",
+        "categories": categories
     }
         
     return render(request, "top_index.html", context)
+@csrf_exempt
+def category_view(request, category):
+    #convert category to upper case to display
+    capitalize_category = category.capitalize()
+    title_category = category.title()
+    upper_case_category = category.upper()
+    lower_case_category = category.lower()
+
+    query_string ="business_name like '%" + category + "%'" + "OR " +\
+        "business_name like '%" + capitalize_category + "%'" + "OR " +\
+        "business_name like '%" + title_category + "%'" + "OR " +\
+        "business_name like '%" + upper_case_category + "%'" + "OR " +\
+        "business_name like '%" + lower_case_category + "%'"
+    results = client.get("pyih-qa8i", where = query_string, limit=1000)
+    context ={
+        "user": request.user,
+        "results": results,
+        "photos": photos,
+        "coverPhotos": coverNum,
+        "headline": headline,
+        "selected_category": capitalize_category,
+        "categories": categories
+    }
+    return render(request, "category.html", context)
 
 @csrf_exempt
 def searchView(request):
@@ -82,6 +110,7 @@ def searchView(request):
             "name": name,
             "coverPhotos": coverNum,
             "headline": headline,
+            "categories": categories
         }
         return render(request, "search.html", context)
     else:
@@ -198,6 +227,7 @@ def business_view(request, business_id):
         "photos": photos,
         "profile": profile,
         "reviews": Reviews.objects.filter(business_id = business_id),
+        "categories": categories,
     }
     return render(request, "business.html", context)
 @csrf_exempt
@@ -220,6 +250,7 @@ def profile_view(request):
                     context ={
                         "user": request.user,
                         "profile": new_profile,
+                        "categories": categories,
                         "successProfile": "Profile Image Successfully Uploaded"
                     }
                     return render(request, "profile.html", context)
@@ -228,6 +259,7 @@ def profile_view(request):
                     context ={
                         "user": request.user,
                         "profile": new_profile,
+                        "categories": categories,
                         "message": "Profile Save Failed"
                     }
                     return render(request, "profile.html", context)
@@ -251,6 +283,7 @@ def profile_view(request):
                 context ={
                     "user": request.user,
                     "profile": new_profile,
+                    "categories": categories,
                     "messagePositive": "Profile Successfully Saved"
                 }
                 return render(request, "profile.html", context)
@@ -259,6 +292,7 @@ def profile_view(request):
                 context ={
                     "user": request.user,
                     "profile": new_profile,
+                    "categories": categories,
                     "message": "Profile Save Failed"
                 }
                 return render(request, "profile.html", context)
@@ -266,6 +300,7 @@ def profile_view(request):
     profile = UserProfile.objects.get(username=username)    
     context ={
         "user": request.user,
+        "categories": categories,
         "profile": profile,
     }
     return render(request, "profile.html", context)
@@ -301,6 +336,7 @@ def review_handler(request):
             "business": business[0],
             "results": results,
             "photos": photos,
+            "categories": categories,
             "profile": profile,
         }
         # Return page with new review in it
