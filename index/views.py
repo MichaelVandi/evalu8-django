@@ -59,6 +59,18 @@ def top_picks(request):
     }
         
     return render(request, "top_index.html", context)
+
+def why_evalu8(request):
+    context ={
+        "user": request.user,
+        "photos": photos,
+        "coverPhotos": coverNum,
+        "headline": headline,
+        "whyevalu8" : "True",
+        "categories": categories
+    }
+        
+    return render(request, "why_us.html", context)
 @csrf_exempt
 def category_view(request, category):
     #convert category to upper case to display

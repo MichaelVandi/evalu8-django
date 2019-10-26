@@ -5,6 +5,7 @@ urlpatterns = [
     path("", views.index_view, name="index"),
     path("profile/", views.profile_view, name="profile"),
     path("top-picks/", views.top_picks, name="topPicks"),
+    path("why-evalu8/", views.why_evalu8, name="whyevalu8"),
     path("review/", views.review_handler, name="review"),
     path("top/", views.getTopPlaces, name="top"),
     path("more/", views.morePlaces, name="places"),
