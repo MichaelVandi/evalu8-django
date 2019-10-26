@@ -1,0 +1,275 @@
+{% extends 'index_base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Div for headline-->
+    <div class="headline-div container-fluid row" style="background-image: linear-gradient(
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.5)
+  ), url({{coverPhotos|random}}); margin-top: 90px; margin-bottom: 30px; display: flex; flex-direction: row;">
+        
+        <div class="headline-container col-md-8">
+            <h1 class="headline-text">{{headline|random}}</h1>
+            {% if user.is_authenticated %}
+
+            {% else %}
+                <div class="headline-btn-div text-center">
+                    <a href="{% url 'login' %}"><button id="action-btn">Get Started</button></a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="card-search col-md-4 text-center">
+            <h3 class="headline-text">Search restaurants</h3>
+            <form id="searchForm" method="POST">
+                {% csrf_token %}
+                <!--Username Div-->
+                <div class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-city"></i></span>
+                    </div>
+                    <input id="cityName" list = "city_list" name="city" type="text" class="form-control" placeholder="City">
+                    <datalist id="city_list">
+                            <option value="San Francisco">California</option>
+                    </datalist>
+                    
+                </div>
+                <!--Password Div-->         
+                <div class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-building"></i></span>
+                    </div>
+                    <input id="restaurantName" name="name" list="bus_search" type="text" class="form-control" placeholder="Restaurant name or address">
+                    <datalist id="bus_search">
+                        {% for business in results %}
+                            <option value="{{business.business_name}}">{{business.business_address}}</option>
+                        {% empty %}
+                            <option>No match... sorry we searched everywhere</option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+                <!--Message Div-->
+                <div>
+                    <p class="sign-up-message">{{message}}</p>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Search" class="search_btn float-right">
+                </div>
+            </form>
+        </div>
+
+    </div>
+       
+    
+
+    <div class="container-fluid text-center">
+        <h4 id="count-text" style="color:black">Food places with health scores over 90%</h4>
+        <div class="d-inline-flex text-center">
+            <div class="bus-list-div">
+            {% for result in results%}
+            <!-- Bluprint
+            <a class="menu-link" href="{% url 'business' result.business_id%}">
+                <div class="bus-div">
+                    
+                    <div class="bus-thumbnail" style="background-image: url( {{photos|random}} );">
+                        <p style="display: none" class="businessQuery">{{result.business_name}}, {{result.business_address}}</p>
+                    </div>
+                    
+                    <div class="bus-info-div">
+                        
+                        <p class="bus-text text-city" style="margin: 0; padding: 0;">{{result.business_city}}</p>
+                        <p class="bus-text text-name">{{result.business_name}}</p>
+                        <p class="bus-text text-address">{{result.business_address}}</p>
+                        {% if result.inspection_score == none %}
+                            <p class="bus-text text-score"><i class="fas bus-icon fa-check-square" style="color: #D28827"></i>No score</p>
+                        {% else %}
+                            <p class="bus-text text-score"><i class="fas bus-icon fa-check-square" style="color: #D28827"></i>{{result.inspection_score}}%</p>                            
+                        {% endif %}
+                        
+                    </div>
+                    
+                </div>
+            </a>
+            -->
+            
+            {% empty %}
+                <!-- Result empty load alternative -->
+            {% endfor %}
+            </div>
+        </div>
+        <!-- Div for loading spinners -->
+        <div style="margin-bottom: 40px;">
+            <div class="spinner-grow text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-secondary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-success" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // When page content loads
+        document.addEventListener('DOMContentLoaded', ()=>{
+            var cityInput = $('#cityName');
+            var nameInput = $('#restaurantName');
+            var cityText ="";
+            var nameText ="";
+
+            // Change navigation to current
+            $("#restaurants").css("border-bottom", "1px solid #D28827");
+        
+            if("{{toppicks}}" != ""){
+                $("#restaurants").css("border-bottom", "none");
+                $("#topPicks").css("border-bottom", "1px solid #D28827");
+            }
+            // Start with first post.
+            let counter = 1;
+            // Load posts 20 at a time.
+            const quantity = 80;
+
+            // When DOM loads, render the first 20 posts.
+            load();
+            cityInput.change(function(){
+                cityText = cityInput.val();
+            })
+            nameInput.change(function(){
+                nameText = nameInput.val();
+            })
+
+            // If scrolled to bottom, load the next 20 posts.
+            $(window).scroll(function() {
+                if($(window).scrollTop() + $(window).height() == $(document).height()) {
+                    load()
+                }
+            });
+            // Load next set of posts.
+            function load() {
+                // Set start and end post numbers, and update counter.
+                const start = counter;
+                const end = start + quantity - 1;
+                counter = end + 1;
+
+                $.ajax({
+                url: "/top",
+                type: "GET", 
+                data:{
+                    start: start,
+                    end: end
+                },
+                success: function(data) {
+                    data = JSON.parse(data);
+                    
+                    data.forEach(add_post);
+                }
+                });
+               
+            };
+            // Search handler code
+            $("#searchForm").submit(function (event){
+                if(cityText === "" || nameText == ""){
+                    $(".sign-up-message").text("Enter all Fields")
+                    return false;
+                }
+                else{
+                    sendDataToServer(cityText, nameText)
+                    return false;
+                }
+            })
+            // Send search data to server
+            function sendDataToServer (city, name){
+                const form_final = document.createElement('form');
+                form_final.method = "POST";
+                form_final.action = "{% url 'search'%}";
+                // Csrf {% csrf_token %}
+                var csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = 'csrfmiddlewaretoken';
+                csrf.value = '{{ csrf_token }}';
+                form_final.appendChild(csrf);
+                var data_to_send = [city, name]
+                var key=["city", "name"]
+                for (i=0; i<data_to_send.length; i++){
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key[i];
+                    input.value = data_to_send[i];
+                    form_final.appendChild(input);
+                }
+                document.getElementById('searchForm').appendChild(form_final);
+                form_final.submit();
+            }
+
+            // Add a new post with given contents to DOM.
+            function add_post(place) {
+               // alert(place.business_name);
+               // Creating User interface elements
+               var link = document.createElement('a');
+               var id = place.business_id.toString();
+               var placelink = "/business/"+ id;
+               link.setAttribute('href', placelink);
+               link.setAttribute('class', 'menu-link');
+               var businessDiv = document.createElement('div');
+               businessDiv.setAttribute('class', 'bus-div');
+               var businessThumbnail = document.createElement('div');
+               businessThumbnail.setAttribute('class', 'bus-thumbnail');
+               //businessThumbnail.setAttribute('style', "background-image: url( {{photos|random}} );");
+               var rawPhotos = "{{photos}}";
+               var photoString = rawPhotos.replace("[&#39;]", "");
+               var photosList = photoString.split(",");
+               var randomPhoto = photosList[Math.floor(Math.random() * photosList.length)].toString();
+               var photo = randomPhoto.slice(6, -5)
+               businessThumbnail.style.backgroundImage = 'url( ' + photo + ' )';
+
+               var otherInfoDiv = document.createElement('div');
+               otherInfoDiv.setAttribute('class', 'bus-info-div');
+
+               var cityText = document.createElement('p');
+               cityText.setAttribute('class', 'bus-text text-city');
+               cityText.setAttribute('style', "margin: 0; padding: 0;");
+               cityText.innerHTML = place.business_city;
+
+               var nameText = document.createElement('p');
+               nameText.setAttribute('class', 'bus-text text-name');
+               nameText.innerHTML = place.business_name;
+
+               var addressText = document.createElement('p');
+               addressText.setAttribute('class', 'bus-text text-address');
+               addressText.innerHTML = place.business_address;
+
+               var scoreText = document.createElement('p');
+               scoreText.setAttribute('class', 'bus-text text-score');
+               
+               var scoreIcon = document.createElement('i');
+               scoreIcon.setAttribute('class', 'fas bus-icon fa-check-square');
+               scoreIcon.setAttribute('style', "color: #D28827");
+               scoreText.appendChild(scoreIcon);
+
+               if(place.inspection_score == null || place.inspection_score == ""){
+                   scoreText.innerHTML = scoreText.innerHTML + "No score";
+               }
+               else{
+                   scoreText.innerHTML = scoreText.innerHTML + place.inspection_score + "%"               
+               }
+               // Append the views
+               otherInfoDiv.appendChild(cityText);
+               otherInfoDiv.appendChild(nameText);
+               otherInfoDiv.appendChild(addressText);
+               otherInfoDiv.appendChild(scoreText);
+               // Now for parent containers
+               businessDiv.appendChild(businessThumbnail);
+               businessDiv.appendChild(otherInfoDiv);
+               // Append parent to anchor element
+               link.appendChild(businessDiv);
+               // Append link to DOM
+               $(".bus-list-div").append(link);
+
+            }
+
+        })
+    </script>
+
+{% endblock %}
